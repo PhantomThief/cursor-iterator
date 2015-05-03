@@ -1,7 +1,7 @@
-# Cursor Iterator
+# Cursor Iterator [![Build Status](https://travis-ci.org/PhantomThief/cursor-iterator.svg)](https://travis-ci.org/PhantomThief/cursor-iterator) [![Coverage Status](https://coveralls.io/repos/PhantomThief/cursor-iterator/badge.svg?branch=master)](https://coveralls.io/r/PhantomThief/cursor-iterator?branch=master)
 =======================
 
-A cursor iterator implements for batch build cursor data 
+一个简单的适合移动端无限下拉构建数据的后端支持组件 
 
 ## Usage
 
