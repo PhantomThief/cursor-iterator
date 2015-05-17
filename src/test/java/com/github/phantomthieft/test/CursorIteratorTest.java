@@ -36,4 +36,27 @@ public class CursorIteratorTest {
             }
         }
     }
+
+    @Test
+    public void testBuilder() {
+        UserDAO userDAO = new UserDAO();
+        Integer startId = 100;
+        int countPerFetch = 10;
+        CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newBuilder() //
+                .withDAO(userDAO::getUsersAscById) //
+                .start(startId) //
+                .cursorExtractor(User::getId) //
+                .limit(countPerFetch) //
+                .build();
+
+        List<User> finalResult = new ArrayList<>();
+        users.stream().forEach(user -> {
+            if (user.getId() % 11 == 0) { // filter
+                System.out.println("add to final result:" + user);
+                finalResult.add(user);
+            } else {
+                System.out.println("ignore add user:" + user);
+            }
+        });
+    }
 }

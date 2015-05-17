@@ -6,7 +6,11 @@ package com.github.phantomthief.util;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * 
@@ -14,16 +18,14 @@ import java.util.function.Function;
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
+    private static final int DEFAULT_LIMIT = 30;
+
     private final GetByCursorDAO<Id, Entity> dao;
-
-    private Id initCursor;
-
     private final int limit;
-
-    private boolean firstTime;
-
     private final Function<Entity, Id> function;
 
+    private Id initCursor;
+    private boolean firstTime;
     private boolean end;
 
     /**
@@ -144,6 +146,60 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 itr().remove();
             }
         };
+    }
+
+    public Stream<Entity> stream() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(),
+                (Spliterator.NONNULL | Spliterator.IMMUTABLE)), false);
+    }
+
+    public static final class Builder<Id, Entity> {
+
+        private GetByCursorDAO<Id, Entity> dao;
+        private int limit;
+        private Function<Entity, Id> function;
+        private Id init;
+
+        public Builder<Id, Entity> withDAO(GetByCursorDAO<Id, Entity> dao) {
+            this.dao = dao;
+            return this;
+        }
+
+        public Builder<Id, Entity> limit(int limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        public Builder<Id, Entity> cursorExtractor(Function<Entity, Id> function) {
+            this.function = function;
+            return this;
+        }
+
+        public Builder<Id, Entity> start(Id init) {
+            this.init = init;
+            return this;
+        }
+
+        public CursorIterator<Id, Entity> build() {
+            ensuer();
+            return new CursorIterator<>(dao, init, limit, function);
+        }
+
+        private void ensuer() {
+            if (dao == null) {
+                throw new NullPointerException("dao is null");
+            }
+            if (function == null) {
+                throw new NullPointerException("cursor extractor is null");
+            }
+            if (limit <= 0) {
+                limit = DEFAULT_LIMIT;
+            }
+        }
+    }
+
+    public static final <Id, Entity> Builder<Id, Entity> newBuilder() {
+        return new Builder<>();
     }
 
 }
