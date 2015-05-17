@@ -14,6 +14,8 @@ public class UserDAO {
 
     private static final int MAX_USER_ID = 938;
 
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
+
     // A fake DAO for test
     public List<User> getUsersAscById(Integer startId, int limit) {
         if (startId == null) {
@@ -21,8 +23,8 @@ public class UserDAO {
         }
         List<User> result = IntStream.range(startId, Math.min(startId + limit, MAX_USER_ID))
                 .mapToObj(User::new).collect(Collectors.toList());
-        System.out.println("get users asc by id, startId:" + startId + ", limit:" + limit
-                + ", result:" + result);
+        logger.trace("get users asc by id, startId:" + startId + ", limit:" + limit + ", result:"
+                + result);
         return result;
     }
 }

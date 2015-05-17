@@ -5,6 +5,7 @@ package com.github.phantomthieft.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import com.github.phantomthief.util.CursorIterator;
  * @author w.vela
  */
 public class CursorIteratorTest {
+
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
 
     @Test
     public void test() {
@@ -26,10 +29,10 @@ public class CursorIteratorTest {
         List<User> finalResult = new ArrayList<>();
         for (User user : users) {
             if (user.getId() % 11 == 0) { // filter
-                System.out.println("add to final result:" + user);
+                logger.info("add to final result:" + user);
                 finalResult.add(user);
             } else {
-                System.out.println("ignore add user:" + user);
+                logger.info("ignore add user:" + user);
             }
             if (finalResult.size() == 50) {
                 break;
@@ -49,14 +52,10 @@ public class CursorIteratorTest {
                 .limit(countPerFetch) //
                 .build();
 
-        List<User> finalResult = new ArrayList<>();
-        users.stream().forEach(user -> {
-            if (user.getId() % 11 == 0) { // filter
-                System.out.println("add to final result:" + user);
-                finalResult.add(user);
-            } else {
-                System.out.println("ignore add user:" + user);
-            }
-        });
+        List<User> collect = users.stream() //
+                .filter(user -> user.getId() % 11 == 0) //
+                .limit(5) //
+                .collect(Collectors.toList());
+        collect.forEach(u -> logger.info("user:{}", u));
     }
 }
