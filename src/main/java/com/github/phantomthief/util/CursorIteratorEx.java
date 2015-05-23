@@ -127,8 +127,8 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             return this;
         }
 
-        public Builder<T, C, R> checkFirstCursor() {
-            this.checkFirstCursor = true;
+        public Builder<T, C, R> firstCursorCheckEnd(boolean check) {
+            this.checkFirstCursor = check;
             return this;
         }
 
