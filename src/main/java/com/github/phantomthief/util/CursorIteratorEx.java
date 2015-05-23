@@ -18,6 +18,7 @@ import java.util.stream.StreamSupport;
 public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
     private final C initCursor;
+    private final boolean checkFirstCursor;
     private final Function<C, R> dataRetriever;
     private final Function<R, C> cursorExtractor;
     private final Function<R, Iterator<T>> dataExtractor;
@@ -25,15 +26,17 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
     /**
      * @param initCursor
+     * @param checkFirstCursor
      * @param dataRetriever
      * @param cursorExtractor
      * @param dataExtractor
      * @param endChecker
      */
-    private CursorIteratorEx(C initCursor, Function<C, R> dataRetriever,
+    private CursorIteratorEx(C initCursor, boolean checkFirstCursor, Function<C, R> dataRetriever,
             Function<R, C> cursorExtractor, Function<R, Iterator<T>> dataExtractor,
             Predicate<C> endChecker) {
         this.initCursor = initCursor;
+        this.checkFirstCursor = checkFirstCursor;
         this.dataRetriever = dataRetriever;
         this.cursorExtractor = cursorExtractor;
         this.dataExtractor = dataExtractor;
@@ -48,7 +51,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
         public RollingIterator() {
             currentCursor = initCursor;
-            if (endChecker.test(currentCursor)) {
+            if (checkFirstCursor && endChecker.test(currentCursor)) {
                 return;
             }
             currentData = dataRetriever.apply(currentCursor);
@@ -113,6 +116,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
     public static final class Builder<T, C, R> {
 
         private C initCursor;
+        private boolean checkFirstCursor;
         private Function<C, R> dataRetriever;
         private Function<R, C> cursorExtractor;
         private Function<R, Iterator<T>> dataExtractor;
@@ -120,6 +124,11 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
         public Builder<T, C, R> withInitCursor(C initCursor) {
             this.initCursor = initCursor;
+            return this;
+        }
+
+        public Builder<T, C, R> checkFirstCursor() {
+            this.checkFirstCursor = true;
             return this;
         }
 
@@ -145,8 +154,8 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
         public CursorIteratorEx<T, C, R> build() {
             ensure();
-            return new CursorIteratorEx<>(initCursor, dataRetriever, cursorExtractor, dataExtractor,
-                    endChecker);
+            return new CursorIteratorEx<>(initCursor, checkFirstCursor, dataRetriever,
+                    cursorExtractor, dataExtractor, endChecker);
         }
 
         private void ensure() {
