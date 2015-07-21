@@ -56,7 +56,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         if (innerData == null) {
             innerData = dao.getByCursor(initCursor, firstTime ? limit : limit + 1);
             if ((innerData.size() > 0) && !firstTime) {
-                innerData.remove(0);
+                innerData = innerData.subList(1, innerData.size());
             }
         }
         return innerData;
@@ -201,5 +201,4 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     public static final <Id, Entity> Builder<Id, Entity> newBuilder() {
         return new Builder<>();
     }
-
 }
