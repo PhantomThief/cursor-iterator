@@ -36,7 +36,7 @@ CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newBuilder(
         .withDAO(UserDAO::getUsersAscById) //
         .start(startId) //
         .cursorExtractor(User::getId) //
-        .limit(countPerFetch) //
+        .bufferSize(countPerFetch) //
         .build();
 
 // jdk1.8 Stream方式

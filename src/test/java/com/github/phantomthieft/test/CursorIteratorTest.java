@@ -49,7 +49,7 @@ public class CursorIteratorTest {
                 .withDAO(userDAO::getUsersAscById) //
                 .start(startId) //
                 .cursorExtractor(User::getId) //
-                .limit(countPerFetch) //
+                .bufferSize(countPerFetch) //
                 .build();
 
         List<User> collect = users.stream() //

@@ -21,7 +21,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     private static final int DEFAULT_LIMIT = 30;
 
     private final GetByCursorDAO<Id, Entity> dao;
-    private final int limit;
+    private final int bufferSize;
     private final Function<Entity, Id> function;
 
     private Id initCursor;
@@ -31,17 +31,17 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     /**
      * @param dao 游标方式取的DAO
      * @param initCursor 第一次的游标位置（包含）
-     * @param limit 每次游标迭代的条数
+     * @param bufferSize 每次游标迭代的条数
      * @param extractor 游标和实体数据的转换器
      */
-    public CursorIterator(GetByCursorDAO<Id, Entity> dao, Id initCursor, int limit,
+    public CursorIterator(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
             Function<Entity, Id> extractor) {
-        if ((limit <= 0) || (dao == null) || (extractor == null)) {
+        if ((bufferSize <= 0) || (dao == null) || (extractor == null)) {
             throw new IllegalArgumentException();
         }
         this.dao = dao;
         this.initCursor = initCursor;
-        this.limit = limit;
+        this.bufferSize = bufferSize;
         this.firstTime = true;
         this.function = extractor;
         this.end = false;
@@ -54,7 +54,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return Collections.emptyList();
         }
         if (innerData == null) {
-            innerData = dao.getByCursor(initCursor, firstTime ? limit : limit + 1);
+            innerData = dao.getByCursor(initCursor, firstTime ? bufferSize : bufferSize + 1);
             if ((innerData.size() > 0) && !firstTime) {
                 innerData = innerData.subList(1, innerData.size());
             }
@@ -92,7 +92,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
      */
     private boolean hasMore() {
         List<Entity> byCurosr = innerData();
-        if (byCurosr.size() < limit) {
+        if (byCurosr.size() < bufferSize) {
             return false;
         } else {
             return true;
@@ -156,7 +156,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     public static final class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
-        private int limit;
+        private int bufferSize;
         private Function<Entity, Id> function;
         private Id init;
 
@@ -165,8 +165,17 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return this;
         }
 
-        public Builder<Id, Entity> limit(int limit) {
-            this.limit = limit;
+        /**
+         * @deprecated in favor of {@link #bufferSize(int)}
+         */
+        @Deprecated
+        public Builder<Id, Entity> limit(int bufferSize) {
+            this.bufferSize = bufferSize;
+            return this;
+        }
+
+        public Builder<Id, Entity> bufferSize(int bufferSize) {
+            this.bufferSize = bufferSize;
             return this;
         }
 
@@ -182,7 +191,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
         public CursorIterator<Id, Entity> build() {
             ensuer();
-            return new CursorIterator<>(dao, init, limit, function);
+            return new CursorIterator<>(dao, init, bufferSize, function);
         }
 
         private void ensuer() {
@@ -192,8 +201,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             if (function == null) {
                 throw new NullPointerException("cursor extractor is null");
             }
-            if (limit <= 0) {
-                limit = DEFAULT_LIMIT;
+            if (bufferSize <= 0) {
+                bufferSize = DEFAULT_LIMIT;
             }
         }
     }
