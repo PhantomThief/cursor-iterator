@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
-    private static final int DEFAULT_LIMIT = 30;
+    private static final int DEFAULT_BUFFER_SIZE = 30;
 
     private final GetByCursorDAO<Id, Entity> dao;
     private final int bufferSize;
@@ -165,15 +165,6 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return this;
         }
 
-        /**
-         * @deprecated in favor of {@link #bufferSize(int)}
-         */
-        @Deprecated
-        public Builder<Id, Entity> limit(int bufferSize) {
-            this.bufferSize = bufferSize;
-            return this;
-        }
-
         public Builder<Id, Entity> bufferSize(int bufferSize) {
             this.bufferSize = bufferSize;
             return this;
@@ -202,7 +193,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 throw new NullPointerException("cursor extractor is null");
             }
             if (bufferSize <= 0) {
-                bufferSize = DEFAULT_LIMIT;
+                bufferSize = DEFAULT_BUFFER_SIZE;
             }
         }
     }
