@@ -5,11 +5,21 @@
 
 ## Usage
 
+* Stable版本
 ```xml
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.4</version>
+</dependency>
+```
+
+* Development版本
+```xml
+<dependency>
+    <groupId>com.github.phantomthief</groupId>
+	<artifactId>cursor-iterator</artifactId>
+    <version>1.0.5-SNAPSHOT</version>
 </dependency>
 ```
 
