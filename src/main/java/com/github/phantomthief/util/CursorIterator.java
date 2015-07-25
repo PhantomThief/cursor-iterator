@@ -149,8 +149,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     }
 
     public Stream<Entity> stream() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(),
-                (Spliterator.NONNULL | Spliterator.IMMUTABLE)), false);
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(iterator(),
+                        (Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.ORDERED)),
+                false);
     }
 
     public static final class Builder<Id, Entity> {
