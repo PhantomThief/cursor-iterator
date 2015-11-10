@@ -155,6 +155,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 false);
     }
 
+    @SuppressWarnings("unchecked")
     public static final class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
@@ -162,9 +163,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private Function<Entity, Id> function;
         private Id init;
 
-        public Builder<Id, Entity> withDAO(GetByCursorDAO<Id, Entity> dao) {
-            this.dao = dao;
-            return this;
+        public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
+            Builder<I, E> thisBuilder = (Builder<I, E>) this;
+            thisBuilder.dao = (GetByCursorDAO<I, E>) dao;
+            return thisBuilder.build();
         }
 
         public Builder<Id, Entity> bufferSize(int bufferSize) {
@@ -172,22 +174,24 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return this;
         }
 
-        public Builder<Id, Entity> cursorExtractor(Function<Entity, Id> function) {
-            this.function = function;
-            return this;
+        public <I, E> Builder<I, E> cursorExtractor(Function<? super E, ? extends I> function) {
+            Builder<I, E> thisBuilder = (Builder<I, E>) this;
+            thisBuilder.function = (Function<E, I>) function;
+            return thisBuilder;
         }
 
-        public Builder<Id, Entity> start(Id init) {
-            this.init = init;
-            return this;
+        public <I, E> Builder<I, E> start(I init) {
+            Builder<I, E> thisBuilder = (Builder<I, E>) this;
+            thisBuilder.init = init;
+            return thisBuilder;
         }
 
-        public CursorIterator<Id, Entity> build() {
-            ensuer();
+        private CursorIterator<Id, Entity> build() {
+            ensure();
             return new CursorIterator<>(dao, init, bufferSize, function);
         }
 
-        private void ensuer() {
+        private void ensure() {
             if (dao == null) {
                 throw new NullPointerException("dao is null");
             }
@@ -200,7 +204,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
     }
 
-    public static final <Id, Entity> Builder<Id, Entity> newBuilder() {
+    public static Builder<Object, Object> newBuilder() {
         return new Builder<>();
     }
 }

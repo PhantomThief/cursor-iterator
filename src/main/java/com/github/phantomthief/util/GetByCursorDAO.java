@@ -19,6 +19,5 @@ public interface GetByCursorDAO<Id, Entity> {
      * @param limit
      * @return
      */
-    public List<Entity> getByCursor(Id cursor, int limit);
-
+    List<Entity> getByCursor(Id cursor, int limit);
 }

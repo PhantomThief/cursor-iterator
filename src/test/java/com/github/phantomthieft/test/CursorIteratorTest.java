@@ -45,12 +45,11 @@ public class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newBuilder() //
-                .withDAO(userDAO::getUsersAscById) //
+        CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
                 .start(startId) //
                 .cursorExtractor(User::getId) //
                 .bufferSize(countPerFetch) //
-                .build();
+                .build(userDAO::getUsersAscById);
 
         List<User> collect = users.stream() //
                 .filter(user -> user.getId() % 11 == 0) //

@@ -19,7 +19,7 @@
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -42,12 +42,11 @@ public class UserDAO {
 }
 
 // 声明
-CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newBuilder() //
-        .withDAO(UserDAO::getUsersAscById) //
+CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
         .start(startId) //
         .cursorExtractor(User::getId) //
         .bufferSize(countPerFetch) //
-        .build();
+        .build(UserDAO::getUsersAscById);
 
 // jdk1.8 Stream方式
 List<User> collect = users.stream() //
