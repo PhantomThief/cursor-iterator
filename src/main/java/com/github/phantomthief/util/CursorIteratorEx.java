@@ -113,6 +113,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
                 (Spliterator.NONNULL | Spliterator.IMMUTABLE)), false);
     }
 
+    @SuppressWarnings("unchecked")
     public static final class Builder<T, C, R> {
 
         private C initCursor;
@@ -122,9 +123,10 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         private Function<R, Iterator<T>> dataExtractor;
         private Predicate<C> endChecker;
 
-        public Builder<T, C, R> withInitCursor(C initCursor) {
-            this.initCursor = initCursor;
-            return this;
+        public <C1> Builder<?, C1, ?> withInitCursor(C1 initCursor) {
+            Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
+            thisBuilder.initCursor = initCursor;
+            return thisBuilder;
         }
 
         public Builder<T, C, R> firstCursorCheckEnd(boolean check) {
@@ -132,29 +134,35 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             return this;
         }
 
-        public Builder<T, C, R> withDataRetriever(Function<C, R> dataRetriever) {
-            this.dataRetriever = dataRetriever;
-            return this;
+        public <C1, R1> Builder<?, C1, R1> withDataRetriever(Function<C1, R1> dataRetriever) {
+            Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
+            thisBuilder.dataRetriever = dataRetriever;
+            return thisBuilder;
         }
 
-        public Builder<T, C, R> withCursorExtractor(Function<R, C> cursorExtractor) {
-            this.cursorExtractor = cursorExtractor;
-            return this;
+        public <C1, R1> Builder<?, C1, R1> withCursorExtractor(Function<R1, C1> cursorExtractor) {
+            Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
+            thisBuilder.cursorExtractor = cursorExtractor;
+            return thisBuilder;
         }
 
-        public Builder<T, C, R> withDataExtractor(Function<R, Iterator<T>> dataExtractor) {
-            this.dataExtractor = dataExtractor;
-            return this;
+        public <T1, R1> Builder<T1, ?, R1>
+                withDataExtractor(Function<R1, Iterator<T1>> dataExtractor) {
+            Builder<T1, ?, R1> thisBuilder = (Builder<T1, ?, R1>) this;
+            thisBuilder.dataExtractor = dataExtractor;
+            return thisBuilder;
         }
 
-        public Builder<T, C, R> withEndChecker(Predicate<C> endChecker) {
-            this.endChecker = endChecker;
-            return this;
+        public <C1> Builder<?, C1, ?> withEndChecker(Predicate<C1> endChecker) {
+            Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
+            thisBuilder.endChecker = endChecker;
+            return thisBuilder;
         }
 
-        public CursorIteratorEx<T, C, R> build() {
+        @SuppressWarnings("rawtypes")
+        public <T1, C1, R1> CursorIteratorEx<T1, C1, R1> build() {
             ensure();
-            return new CursorIteratorEx<>(initCursor, checkFirstCursor, dataRetriever,
+            return new CursorIteratorEx(initCursor, checkFirstCursor, dataRetriever,
                     cursorExtractor, dataExtractor, endChecker);
         }
 
@@ -175,8 +183,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
 
     }
 
-    public static final <T, C, R> Builder<T, C, R> newBuilder() {
+    public static final Builder<Object, Object, Object> newBuilder() {
         return new Builder<>();
     }
-
 }

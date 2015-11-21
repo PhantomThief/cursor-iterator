@@ -3,6 +3,9 @@
  */
 package com.github.phantomthief.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -33,12 +36,16 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
      * @param initCursor 第一次的游标位置（包含）
      * @param bufferSize 每次游标迭代的条数
      * @param extractor 游标和实体数据的转换器
+     * 
+     * better use {@code #newBuilder()}
      */
+    @Deprecated
     public CursorIterator(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
             Function<Entity, Id> extractor) {
-        if ((bufferSize <= 0) || (dao == null) || (extractor == null)) {
-            throw new IllegalArgumentException();
-        }
+        checkArgument(bufferSize > 0);
+        checkNotNull(dao);
+        checkNotNull(extractor);
+
         this.dao = dao;
         this.initCursor = initCursor;
         this.bufferSize = bufferSize;
@@ -192,12 +199,9 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         private void ensure() {
-            if (dao == null) {
-                throw new NullPointerException("dao is null");
-            }
-            if (function == null) {
-                throw new NullPointerException("cursor extractor is null");
-            }
+            checkNotNull(dao);
+            checkNotNull(function);
+
             if (bufferSize <= 0) {
                 bufferSize = DEFAULT_BUFFER_SIZE;
             }

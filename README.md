@@ -3,14 +3,14 @@
 
 一个简单的适合移动端无限下拉构建数据的后端支持组件 
 
-## Usage
+## 使用方法
 
 * Stable版本
 ```xml
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 
@@ -19,7 +19,7 @@
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
 </dependency>
 ```
 

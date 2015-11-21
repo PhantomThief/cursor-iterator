@@ -23,11 +23,10 @@ public class CursorIteratorExTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIteratorEx<User, Integer, ScanResult> users = CursorIteratorEx
-                .<User, Integer, ScanResult> newBuilder() //
-                .withDataRetriever(cursor -> userDAO.scan(cursor, countPerFetch)) //
+        CursorIteratorEx<User, Integer, ScanResult> users = CursorIteratorEx.newBuilder() //
+                .withDataRetriever((Integer cursor) -> userDAO.scan(cursor, countPerFetch)) //
                 .withCursorExtractor(ScanResult::getNextCursor) //
-                .withDataExtractor(s -> s.getUsers().iterator()) //
+                .withDataExtractor((ScanResult s) -> s.getUsers().iterator()) //
                 .withInitCursor(startId) //
                 .build();
 

@@ -23,6 +23,7 @@ public class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
+        @SuppressWarnings("deprecation")
         CursorIterator<Integer, User> users = new CursorIterator<>(userDAO::getUsersAscById,
                 startId, countPerFetch, User::getId);
 
