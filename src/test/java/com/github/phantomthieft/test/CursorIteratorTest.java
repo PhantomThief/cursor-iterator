@@ -23,9 +23,11 @@ public class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        @SuppressWarnings("deprecation")
-        CursorIterator<Integer, User> users = new CursorIterator<>(userDAO::getUsersAscById,
-                startId, countPerFetch, User::getId);
+        CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
+                .start(startId) //
+                .bufferSize(countPerFetch) //
+                .cursorExtractor(User::getId) //
+                .build(userDAO::getUsersAscById);
 
         List<User> finalResult = new ArrayList<>();
         for (User user : users) {
