@@ -154,8 +154,40 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 false);
     }
 
+    public static class GenericBuilder<Id, Entity> {
+
+        private final Builder<Object, Object> builder;
+
+        /**
+         * @param builder
+         */
+        private GenericBuilder(Builder<Object, Object> builder) {
+            this.builder = builder;
+        }
+
+        public CursorIterator<Id, Entity> build(GetByCursorDAO<? super Id, ? extends Entity> dao) {
+            return builder.build(dao);
+        }
+
+        public GenericBuilder<Id, Entity>
+                cursorExtractor(Function<? super Entity, ? extends Id> function) {
+            builder.cursorExtractor(function);
+            return this;
+        }
+
+        public GenericBuilder<Id, Entity> start(Id init) {
+            builder.start(init);
+            return this;
+        }
+
+        public GenericBuilder<Id, Entity> bufferSize(int bufferSize) {
+            builder.bufferSize(bufferSize);
+            return this;
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public static final class Builder<Id, Entity> {
+    public static class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
         private int bufferSize;
@@ -198,6 +230,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 bufferSize = DEFAULT_BUFFER_SIZE;
             }
         }
+    }
+
+    public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
+        return new GenericBuilder<>(newBuilder());
     }
 
     public static Builder<Object, Object> newBuilder() {

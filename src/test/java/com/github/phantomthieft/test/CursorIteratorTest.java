@@ -60,4 +60,22 @@ public class CursorIteratorTest {
                 .collect(Collectors.toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
+
+    @Test
+    public void testGenericBuilder() {
+        UserDAO userDAO = new UserDAO();
+        Integer startId = 100;
+        int countPerFetch = 10;
+        CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newGenericBuilder() //
+                .start(startId) //
+                .cursorExtractor(User::getId) //
+                .bufferSize(countPerFetch) //
+                .build(userDAO::getUsersAscById);
+
+        List<User> collect = users.stream() //
+                .filter(user -> user.getId() % 11 == 0) //
+                .limit(5) //
+                .collect(Collectors.toList());
+        collect.forEach(u -> logger.info("user:{}", u));
+    }
 }
