@@ -3,11 +3,15 @@
  */
 package com.github.phantomthieft.test;
 
+import static com.github.phantomthief.util.CursorIterator.newBuilder;
+import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import com.github.phantomthief.util.CursorIterator;
 
@@ -16,14 +20,14 @@ import com.github.phantomthief.util.CursorIterator;
  */
 public class CursorIteratorTest {
 
-    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     @Test
     public void test() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
+        CursorIterator<Integer, User> users = newBuilder() //
                 .start(startId) //
                 .bufferSize(countPerFetch) //
                 .cursorExtractor(User::getId) //
@@ -48,7 +52,7 @@ public class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
+        CursorIterator<Integer, User> users = newBuilder() //
                 .start(startId) //
                 .cursorExtractor(User::getId) //
                 .bufferSize(countPerFetch) //
@@ -57,7 +61,7 @@ public class CursorIteratorTest {
         List<User> collect = users.stream() //
                 .filter(user -> user.getId() % 11 == 0) //
                 .limit(5) //
-                .collect(Collectors.toList());
+                .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
 
@@ -75,7 +79,7 @@ public class CursorIteratorTest {
         List<User> collect = users.stream() //
                 .filter(user -> user.getId() % 11 == 0) //
                 .limit(5) //
-                .collect(Collectors.toList());
+                .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
 }

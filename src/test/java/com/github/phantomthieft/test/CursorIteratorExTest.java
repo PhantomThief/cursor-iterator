@@ -3,10 +3,14 @@
  */
 package com.github.phantomthieft.test;
 
+import static com.github.phantomthief.util.CursorIteratorEx.newBuilder;
+import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import com.github.phantomthief.util.CursorIteratorEx;
 import com.github.phantomthieft.test.UserDAO.ScanResult;
@@ -16,14 +20,14 @@ import com.github.phantomthieft.test.UserDAO.ScanResult;
  */
 public class CursorIteratorExTest {
 
-    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     @Test
     public void test() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIteratorEx<User, Integer, ScanResult> users = CursorIteratorEx.newBuilder() //
+        CursorIteratorEx<User, Integer, ScanResult> users = newBuilder() //
                 .withDataRetriever((Integer cursor) -> userDAO.scan(cursor, countPerFetch)) //
                 .withCursorExtractor(ScanResult::getNextCursor) //
                 .withDataExtractor((ScanResult s) -> s.getUsers().iterator()) //
@@ -33,7 +37,7 @@ public class CursorIteratorExTest {
         List<User> collect = users.stream() //
                 .filter(user -> user.getId() % 11 == 0) //
                 .limit(5) //
-                .collect(Collectors.toList());
+                .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
 }

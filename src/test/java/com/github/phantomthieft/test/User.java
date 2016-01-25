@@ -10,9 +10,6 @@ public class User {
 
     private final int id;
 
-    /**
-     * @param id
-     */
     public User(int id) {
         this.id = id;
     }

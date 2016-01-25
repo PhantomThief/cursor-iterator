@@ -4,12 +4,14 @@
 package com.github.phantomthief.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Spliterator.IMMUTABLE;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -29,6 +31,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     private Id initCursor;
     private boolean firstTime;
     private boolean end;
+    private List<Entity> innerData;
 
     /**
      * @param dao 游标方式取的DAO
@@ -46,7 +49,13 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         this.end = false;
     }
 
-    private List<Entity> innerData;
+    public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
+        return new GenericBuilder<>(newBuilder());
+    }
+
+    public static Builder<Object, Object> newBuilder() {
+        return new Builder<>();
+    }
 
     private List<Entity> innerData() {
         if (end) {
@@ -63,8 +72,6 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
     /**
      * 取到内部迭代器
-     * 
-     * @return
      */
     private Iterator<Entity> innerIterator() {
         return innerData().iterator();
@@ -72,35 +79,23 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
     /**
      * 下一个迭代时拿上一次游标的位置
-     * 
-     * @return
      */
     private Id getLastCursor() {
         List<Entity> byCursor = innerData();
         if (byCursor == null || byCursor.isEmpty()) {
             return null;
         }
-        Id result = function.apply(byCursor.get(byCursor.size() - 1));
-        return result;
+        return function.apply(byCursor.get(byCursor.size() - 1));
     }
 
     /**
      * 判断是否到结尾的标记
-     * 
-     * @return
      */
     private boolean hasMore() {
         List<Entity> byCurosr = innerData();
-        if (byCurosr.size() < bufferSize) {
-            return false;
-        } else {
-            return true;
-        }
+        return byCurosr.size() >= bufferSize;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
     @Override
     public Iterator<Entity> iterator() {
         /**
@@ -122,7 +117,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 boolean hasNext = itr().hasNext();
                 if (!hasNext) {
                     if (end) {
-                        return hasNext;
+                        return false;
                     } else {
                         initCursor = getLastCursor();
                         firstTime = false;
@@ -132,7 +127,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                         return itr().hasNext();
                     }
                 }
-                return hasNext;
+                return true;
             }
 
             @Override
@@ -149,18 +144,13 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
     public Stream<Entity> stream() {
         return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(iterator(),
-                        (Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.ORDERED)),
-                false);
+                spliteratorUnknownSize(iterator(), (NONNULL | IMMUTABLE | ORDERED)), false);
     }
 
     public static class GenericBuilder<Id, Entity> {
 
         private final Builder<Object, Object> builder;
 
-        /**
-         * @param builder
-         */
         private GenericBuilder(Builder<Object, Object> builder) {
             this.builder = builder;
         }
@@ -169,8 +159,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return builder.build(dao);
         }
 
-        public GenericBuilder<Id, Entity>
-                cursorExtractor(Function<? super Entity, ? extends Id> function) {
+        public GenericBuilder<Id, Entity> cursorExtractor(
+                Function<? super Entity, ? extends Id> function) {
             builder.cursorExtractor(function);
             return this;
         }
@@ -230,13 +220,5 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
                 bufferSize = DEFAULT_BUFFER_SIZE;
             }
         }
-    }
-
-    public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
-        return new GenericBuilder<>(newBuilder());
-    }
-
-    public static Builder<Object, Object> newBuilder() {
-        return new Builder<>();
     }
 }

@@ -14,10 +14,6 @@ public interface GetByCursorDAO<Id, Entity> {
 
     /**
      * retrieve limited data starting by cursor(inclusive)
-     * 
-     * @param cursor
-     * @param limit
-     * @return
      */
     List<Entity> getByCursor(Id cursor, int limit);
 }
