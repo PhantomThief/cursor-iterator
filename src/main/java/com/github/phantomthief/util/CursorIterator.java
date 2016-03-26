@@ -9,44 +9,26 @@ import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.google.common.collect.AbstractIterator;
+
 /**
  * 
  * @author w.vela
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
+    
+    private final PageScroller<Id, Entity> pageScroller;
 
     private static final int DEFAULT_BUFFER_SIZE = 30;
 
-    private final GetByCursorDAO<Id, Entity> dao;
-    private final int bufferSize;
-    private final Function<Entity, Id> function;
-
-    private Id initCursor;
-    private boolean firstTime;
-    private boolean end;
-    private List<Entity> innerData;
-
-    /**
-     * @param dao 游标方式取的DAO
-     * @param initCursor 第一次的游标位置（包含）
-     * @param bufferSize 每次游标迭代的条数
-     * @param extractor 游标和实体数据的转换器
-     */
-    private CursorIterator(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
-            Function<Entity, Id> extractor) {
-        this.dao = dao;
-        this.initCursor = initCursor;
-        this.bufferSize = bufferSize;
-        this.firstTime = true;
-        this.function = extractor;
-        this.end = false;
+    private CursorIterator(PageScroller<Id, Entity> pageScroller) {
+        this.pageScroller = pageScroller;
     }
 
     public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
@@ -57,87 +39,23 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         return new Builder<>();
     }
 
-    private List<Entity> innerData() {
-        if (end) {
-            return Collections.emptyList();
-        }
-        if (innerData == null) {
-            innerData = dao.getByCursor(initCursor, firstTime ? bufferSize : bufferSize + 1);
-            if ((innerData.size() > 0) && !firstTime) {
-                innerData = innerData.subList(1, innerData.size());
-            }
-        }
-        return innerData;
-    }
-
-    /**
-     * 取到内部迭代器
-     */
-    private Iterator<Entity> innerIterator() {
-        return innerData().iterator();
-    }
-
-    /**
-     * 下一个迭代时拿上一次游标的位置
-     */
-    private Id getLastCursor() {
-        List<Entity> byCursor = innerData();
-        if (byCursor == null || byCursor.isEmpty()) {
-            return null;
-        }
-        return function.apply(byCursor.get(byCursor.size() - 1));
-    }
-
-    /**
-     * 判断是否到结尾的标记
-     */
-    private boolean hasMore() {
-        List<Entity> byCurosr = innerData();
-        return byCurosr.size() >= bufferSize;
-    }
-
     @Override
     public Iterator<Entity> iterator() {
-        /**
-         * 这个匿名类主要做lazy的用途，可以在迭代的过程中，不会把所有的数据和迭代器都生成，只生成最近两个的
-         */
-        return new Iterator<Entity>() {
+        return new AbstractIterator<Entity>() {
 
-            private Iterator<Entity> itr;
-
-            private Iterator<Entity> itr() {
-                if (itr == null) {
-                    itr = innerIterator();
-                }
-                return itr;
-            }
+            private final Iterator<List<Entity>> pageIterator = pageScroller.iterator();
+            private Iterator<Entity> entityIteratorInPage;
 
             @Override
-            public boolean hasNext() {
-                boolean hasNext = itr().hasNext();
-                if (!hasNext) {
-                    if (end) {
-                        return false;
+            protected Entity computeNext() {
+                if (entityIteratorInPage == null || !entityIteratorInPage.hasNext()) {
+                    if (pageIterator.hasNext()) {
+                        entityIteratorInPage = pageIterator.next().iterator();
                     } else {
-                        initCursor = getLastCursor();
-                        firstTime = false;
-                        end = !hasMore();
-                        innerData = null;
-                        itr = null;
-                        return itr().hasNext();
+                        return endOfData();
                     }
                 }
-                return true;
-            }
-
-            @Override
-            public Entity next() {
-                return itr().next();
-            }
-
-            @Override
-            public void remove() {
-                itr().remove();
+                return entityIteratorInPage.next();
             }
         };
     }
@@ -209,7 +127,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
         private CursorIterator<Id, Entity> build() {
             ensure();
-            return new CursorIterator<>(dao, init, bufferSize, function);
+            return new CursorIterator<>(new PageScroller<>(dao, init, bufferSize, function));
         }
 
         private void ensure() {

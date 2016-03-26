@@ -5,6 +5,7 @@ package com.github.phantomthieft.test;
 
 import static com.github.phantomthief.util.CursorIterator.newBuilder;
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.ArrayList;
@@ -45,6 +46,28 @@ public class CursorIteratorTest {
                 break;
             }
         }
+    }
+
+    @Test
+    public void testIterateTwice() {
+        UserDAO userDAO = new UserDAO();
+        Integer startId = 100;
+        int countPerFetch = 10;
+        CursorIterator<Integer, User> users = newBuilder() //
+                .start(startId) //
+                .bufferSize(countPerFetch) //
+                .cursorExtractor(User::getId) //
+                .build(userDAO::getUsersAscById);
+        iterateOnce(users);
+        iterateOnce(users);
+    }
+
+    private void iterateOnce(CursorIterator<Integer, User> users) {
+        int i = 100;
+        for (User user : users) {
+            assertEquals(i++, user.getId());
+        }
+        assertEquals(938, i);
     }
 
     @Test
