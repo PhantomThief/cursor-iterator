@@ -19,6 +19,7 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     private final Id initCursor;
     private final int bufferSize;
     private final Function<Entity, Id> entityIdFunction;
+    private int maxNumberOfPages = Integer.MAX_VALUE;
 
     public PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
             Function<Entity, Id> entityIdFunction) {
@@ -26,6 +27,10 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         this.initCursor = initCursor;
         this.bufferSize = bufferSize;
         this.entityIdFunction = entityIdFunction;
+    }
+
+    public void setMaxNumberOfPages(int maxNumberOfPages) {
+        this.maxNumberOfPages = maxNumberOfPages;
     }
 
     /**
@@ -43,6 +48,7 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
 
             private List<Entity> previousPage;
             private boolean firstTime = true;
+            private int pageIndex = 0;
 
             @Override
             protected List<Entity> computeNext() {
@@ -52,7 +58,10 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
                     // 第一次, 正常取
                     page = dao.getByCursor(initCursor, bufferSize);
                 } else {
-                    if (previousPage.size() < bufferSize) {
+                    if (pageIndex >= maxNumberOfPages) {
+                        // 已经取到限制的页数了
+                        page = Collections.emptyList();
+                    } else if (previousPage.size() < bufferSize) {
                         // 上页还不满, fail fast
                         page = Collections.emptyList();
                     } else {
@@ -63,6 +72,7 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
                 }
 
                 previousPage = page;
+                pageIndex++;
                 return page.isEmpty() ? endOfData() : page;
             }
         };

@@ -62,6 +62,24 @@ public class CursorIteratorTest {
         iterateOnce(users);
     }
 
+    @Test
+    public void testPageThreshold() {
+        UserDAO userDAO = new UserDAO();
+        Integer startId = 100;
+        int countPerFetch = 10;
+        CursorIterator<Integer, User> users = newBuilder() //
+                .start(startId) //
+                .bufferSize(countPerFetch) //
+                .cursorExtractor(User::getId) //
+                .maxNumberOfPages(3)
+                .build(userDAO::getUsersAscById);
+        int i = 100;
+        for (User user : users) {
+            assertEquals(i++, user.getId());
+        }
+        assertEquals(130, i);
+    }
+
     private void iterateOnce(CursorIterator<Integer, User> users) {
         int i = 100;
         for (User user : users) {

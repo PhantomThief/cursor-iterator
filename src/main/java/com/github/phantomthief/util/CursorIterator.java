@@ -101,6 +101,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private int bufferSize;
         private Function<Entity, Id> function;
         private Id init;
+        private int maxNumberOfPages = 0;
 
         public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
@@ -125,9 +126,19 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return thisBuilder;
         }
 
+        public <I, E> Builder<I, E> maxNumberOfPages(int maxNumberOfPages) {
+            Builder<I, E> thisBuilder = (Builder<I, E>) this;
+            thisBuilder.maxNumberOfPages = maxNumberOfPages;
+            return thisBuilder;
+        }
+
         private CursorIterator<Id, Entity> build() {
             ensure();
-            return new CursorIterator<>(new PageScroller<>(dao, init, bufferSize, function));
+            PageScroller<Id, Entity> scroller = new PageScroller<>(dao, init, bufferSize, function);
+            if (maxNumberOfPages > 0) {
+                scroller.setMaxNumberOfPages(maxNumberOfPages);
+            }
+            return new CursorIterator<>(scroller);
         }
 
         private void ensure() {
