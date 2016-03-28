@@ -71,5 +71,4 @@ for (User user : users) {
 
 ## 注意事项
 
-* CursorIterator是有状态的，所以复用时要谨慎，或者简单来说，不要复用（这在把CursorIterator当做返回值使用时尤其要注意）。
 * GetByCursorDAO返回的元素不能有null，因为如果结尾的元素是null，CursorIterator将无法根据null计算下一次迭代滑动窗口时的起始位置
