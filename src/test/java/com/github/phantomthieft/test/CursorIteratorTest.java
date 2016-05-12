@@ -71,8 +71,7 @@ public class CursorIteratorTest {
                 .start(startId) //
                 .bufferSize(countPerFetch) //
                 .cursorExtractor(User::getId) //
-                .maxNumberOfPages(3)
-                .build(userDAO::getUsersAscById);
+                .maxNumberOfPages(3).build(userDAO::getUsersAscById);
         int i = 100;
         for (User user : users) {
             assertEquals(i++, user.getId());

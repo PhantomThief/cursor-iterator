@@ -29,10 +29,6 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         this.entityIdFunction = entityIdFunction;
     }
 
-    public void setMaxNumberOfPages(int maxNumberOfPages) {
-        this.maxNumberOfPages = maxNumberOfPages;
-    }
-
     /**
      * 由于 dao 实现中, start 是被包含的, 使用上一次 cursor 取的时候希望去除 start, 所以还需要多取一个
      */
@@ -40,6 +36,10 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
             fetchOnePageExcludeStart(GetByCursorDAO<Id, Entity> dao, Id start, int limit) {
         List<Entity> entities = dao.getByCursor(start, limit + 1);
         return entities.isEmpty() ? entities : entities.subList(1, entities.size());
+    }
+
+    public void setMaxNumberOfPages(int maxNumberOfPages) {
+        this.maxNumberOfPages = maxNumberOfPages;
     }
 
     @Override

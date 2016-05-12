@@ -39,9 +39,6 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         return new Builder<>();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
     @Override
     public Iterator<T> iterator() {
         return new RollingIterator();
@@ -85,8 +82,8 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             return thisBuilder;
         }
 
-        public <T1, R1> Builder<T1, ?, R1> withDataExtractor(
-                Function<R1, Iterator<T1>> dataExtractor) {
+        public <T1, R1> Builder<T1, ?, R1>
+                withDataExtractor(Function<R1, Iterator<T1>> dataExtractor) {
             Builder<T1, ?, R1> thisBuilder = (Builder<T1, ?, R1>) this;
             thisBuilder.dataExtractor = dataExtractor;
             return thisBuilder;
@@ -140,9 +137,6 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see java.util.Iterator#hasNext()
-         */
         @Override
         public boolean hasNext() {
             if (currentIterator == null) {
@@ -170,9 +164,6 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see java.util.Iterator#next()
-         */
         @Override
         public T next() {
             return currentIterator.next();

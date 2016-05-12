@@ -22,10 +22,9 @@ import com.google.common.collect.AbstractIterator;
  * @author w.vela
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
-    
-    private final PageScroller<Id, Entity> pageScroller;
 
     private static final int DEFAULT_BUFFER_SIZE = 30;
+    private final PageScroller<Id, Entity> pageScroller;
 
     private CursorIterator(PageScroller<Id, Entity> pageScroller) {
         this.pageScroller = pageScroller;
@@ -61,8 +60,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     }
 
     public Stream<Entity> stream() {
-        return StreamSupport.stream(
-                spliteratorUnknownSize(iterator(), (NONNULL | IMMUTABLE | ORDERED)), false);
+        return StreamSupport
+                .stream(spliteratorUnknownSize(iterator(), (NONNULL | IMMUTABLE | ORDERED)), false);
     }
 
     public static class GenericBuilder<Id, Entity> {
@@ -77,8 +76,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return builder.build(dao);
         }
 
-        public GenericBuilder<Id, Entity> cursorExtractor(
-                Function<? super Entity, ? extends Id> function) {
+        public GenericBuilder<Id, Entity>
+                cursorExtractor(Function<? super Entity, ? extends Id> function) {
             builder.cursorExtractor(function);
             return this;
         }
@@ -94,6 +93,9 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
     }
 
+    /**
+     *
+     */
     @SuppressWarnings("unchecked")
     public static class Builder<Id, Entity> {
 
