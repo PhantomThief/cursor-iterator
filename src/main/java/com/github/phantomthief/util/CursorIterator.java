@@ -3,6 +3,7 @@
  */
 package com.github.phantomthief.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Spliterator.IMMUTABLE;
 import static java.util.Spliterator.NONNULL;
@@ -100,7 +101,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     public static class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
-        private int bufferSize;
+        private Integer bufferSize;
         private Function<Entity, Id> function;
         private Id init;
         private int maxNumberOfPages = 0;
@@ -112,6 +113,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         public Builder<Id, Entity> bufferSize(int bufferSize) {
+            checkArgument(bufferSize > 0);
             this.bufferSize = bufferSize;
             return this;
         }
@@ -147,7 +149,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             checkNotNull(dao);
             checkNotNull(function);
 
-            if (bufferSize <= 0) {
+            if (bufferSize == null) {
                 bufferSize = DEFAULT_BUFFER_SIZE;
             }
         }
