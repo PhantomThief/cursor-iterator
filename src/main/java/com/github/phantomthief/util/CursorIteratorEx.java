@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * @author w.vela
  */
@@ -35,6 +37,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         this.endChecker = endChecker;
     }
 
+    @CheckReturnValue
     public static Builder<Object, Object, Object> newBuilder() {
         return new Builder<>();
     }
@@ -59,29 +62,34 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         private Function<R, Iterator<T>> dataExtractor;
         private Predicate<C> endChecker;
 
+        @CheckReturnValue
         public <C1> Builder<?, C1, ?> withInitCursor(C1 initCursor) {
             Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
             thisBuilder.initCursor = initCursor;
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public Builder<T, C, R> firstCursorCheckEnd(boolean check) {
             this.checkFirstCursor = check;
             return this;
         }
 
+        @CheckReturnValue
         public <C1, R1> Builder<?, C1, R1> withDataRetriever(Function<C1, R1> dataRetriever) {
             Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
             thisBuilder.dataRetriever = dataRetriever;
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public <C1, R1> Builder<?, C1, R1> withCursorExtractor(Function<R1, C1> cursorExtractor) {
             Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
             thisBuilder.cursorExtractor = cursorExtractor;
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public <T1, R1> Builder<T1, ?, R1>
                 withDataExtractor(Function<R1, Iterator<T1>> dataExtractor) {
             Builder<T1, ?, R1> thisBuilder = (Builder<T1, ?, R1>) this;
@@ -89,6 +97,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public <C1> Builder<?, C1, ?> withEndChecker(Predicate<C1> endChecker) {
             Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
             thisBuilder.endChecker = endChecker;

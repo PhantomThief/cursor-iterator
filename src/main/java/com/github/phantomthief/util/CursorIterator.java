@@ -16,6 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.CheckReturnValue;
+
 import com.google.common.collect.AbstractIterator;
 
 /**
@@ -31,10 +33,12 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         this.pageScroller = pageScroller;
     }
 
+    @CheckReturnValue
     public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
         return new GenericBuilder<>(newBuilder());
     }
 
+    @CheckReturnValue
     public static Builder<Object, Object> newBuilder() {
         return new Builder<>();
     }
@@ -77,17 +81,20 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return builder.build(dao);
         }
 
+        @CheckReturnValue
         public GenericBuilder<Id, Entity>
                 cursorExtractor(Function<? super Entity, ? extends Id> function) {
             builder.cursorExtractor(function);
             return this;
         }
 
+        @CheckReturnValue
         public GenericBuilder<Id, Entity> start(Id init) {
             builder.start(init);
             return this;
         }
 
+        @CheckReturnValue
         public GenericBuilder<Id, Entity> bufferSize(int bufferSize) {
             builder.bufferSize(bufferSize);
             return this;
@@ -112,24 +119,28 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return thisBuilder.build();
         }
 
+        @CheckReturnValue
         public Builder<Id, Entity> bufferSize(int bufferSize) {
             checkArgument(bufferSize > 0);
             this.bufferSize = bufferSize;
             return this;
         }
 
+        @CheckReturnValue
         public <I, E> Builder<I, E> cursorExtractor(Function<? super E, ? extends I> function) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.function = (Function<E, I>) function;
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public <I, E> Builder<I, E> start(I init) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.init = init;
             return thisBuilder;
         }
 
+        @CheckReturnValue
         public <I, E> Builder<I, E> maxNumberOfPages(int maxNumberOfPages) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.maxNumberOfPages = maxNumberOfPages;
