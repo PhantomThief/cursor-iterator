@@ -38,6 +38,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         return new GenericBuilder<>(newBuilder());
     }
 
+    /**
+     * better use {@link #newGenericBuilder()} for type safe
+     */
+    @Deprecated
     @CheckReturnValue
     public static Builder<Object, Object> newBuilder() {
         return new Builder<>();
