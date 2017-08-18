@@ -5,6 +5,8 @@ package com.github.phantomthief.util;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * Get data by cursor
  * 
@@ -15,5 +17,5 @@ public interface GetByCursorDAO<Id, Entity> {
     /**
      * retrieve limited data starting by cursor(inclusive)
      */
-    List<Entity> getByCursor(Id cursor, int limit);
+    List<Entity> getByCursor(@Nullable Id cursor, int limit);
 }
