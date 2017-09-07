@@ -41,15 +41,17 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         List<Entity> result = new ArrayList<>(entities.size());
         for (Entity entity : entities) {
             // skip head (cursor inclusive)
-            if (isHead && entityIdFunction.apply(entity).equals(start)) {
-                continue;
+            if (isHead) {
+                isHead = false;
+                if (entityIdFunction.apply(entity).equals(start)) {
+                    continue;
+                }
             }
             result.add(entity);
             // break if reach limit (cursor exclusive)
             if (result.size() >= limit) {
                 break;
             }
-            isHead = false;
         }
         return result;
     }
