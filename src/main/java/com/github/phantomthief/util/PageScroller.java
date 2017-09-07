@@ -1,10 +1,10 @@
 package com.github.phantomthief.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.AbstractIterator;
 
@@ -37,10 +37,21 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
             int limit) {
         List<Entity> entities = dao.getByCursor(start, limit + 1);
         // 如果结果中不包含 start 的话，则不去除
-        return entities.stream() //
-                .filter(entity -> !entityIdFunction.apply(entity).equals(start)) //
-                .limit(limit) // 多取了也不好
-                .collect(Collectors.toList());
+        boolean isHead = true;
+        List<Entity> result = new ArrayList<>(entities.size());
+        for (Entity entity : entities) {
+            // skip head (cursor inclusive)
+            if (isHead && entityIdFunction.apply(entity).equals(start)) {
+                continue;
+            }
+            result.add(entity);
+            // break if reach limit (cursor exclusive)
+            if (result.size() >= limit) {
+                break;
+            }
+            isHead = false;
+        }
+        return result;
     }
 
     public void setMaxNumberOfPages(int maxNumberOfPages) {
