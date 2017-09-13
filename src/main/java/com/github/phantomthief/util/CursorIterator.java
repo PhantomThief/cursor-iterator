@@ -103,13 +103,6 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             builder.bufferSize(bufferSize);
             return this;
         }
-
-        @CheckReturnValue
-        public GenericBuilder<Id, Entity> maxNumberOfPages(int maxNumberOfPages) {
-            builder.maxNumberOfPages(maxNumberOfPages);
-            return this;
-        }
-
     }
 
     /**

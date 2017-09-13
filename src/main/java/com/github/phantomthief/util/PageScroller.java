@@ -1,6 +1,5 @@
 package com.github.phantomthief.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,29 +30,12 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     }
 
     /**
-     * 由于 dao 实现中, start 可能是被包含的, 要过滤 start, 最好多取一个
+     * 由于 dao 实现中, start 是被包含的, 使用上一次 cursor 取的时候希望去除 start, 所以还需要多取一个
      */
-    private List<Entity> fetchOnePageExcludeStart(GetByCursorDAO<Id, Entity> dao, Id start,
-            int limit) {
+    private static <Id, Entity> List<Entity>
+            fetchOnePageExcludeStart(GetByCursorDAO<Id, Entity> dao, Id start, int limit) {
         List<Entity> entities = dao.getByCursor(start, limit + 1);
-        // 如果结果中不包含 start 的话，则不去除
-        boolean isHead = true;
-        List<Entity> result = new ArrayList<>(entities.size());
-        for (Entity entity : entities) {
-            // skip head (cursor inclusive)
-            if (isHead) {
-                isHead = false;
-                if (entityIdFunction.apply(entity).equals(start)) {
-                    continue;
-                }
-            }
-            result.add(entity);
-            // break if reach limit (cursor exclusive)
-            if (result.size() >= limit) {
-                break;
-            }
-        }
-        return result;
+        return entities.isEmpty() ? entities : entities.subList(1, entities.size());
     }
 
     public void setMaxNumberOfPages(int maxNumberOfPages) {
