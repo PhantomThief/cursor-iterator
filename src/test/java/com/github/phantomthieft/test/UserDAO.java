@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.github.phantomthieft.test;
 
 import static java.lang.Math.min;

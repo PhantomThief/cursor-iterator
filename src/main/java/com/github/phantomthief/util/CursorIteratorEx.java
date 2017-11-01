@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.github.phantomthief.util;
 
 import java.util.Iterator;
@@ -13,6 +10,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 /**
  * @author w.vela
@@ -42,6 +40,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         return new Builder<>();
     }
 
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return new RollingIterator();
@@ -134,7 +133,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         private R currentData;
         private Iterator<T> currentIterator;
 
-        public RollingIterator() {
+        RollingIterator() {
             currentCursor = initCursor;
             if (checkFirstCursor && endChecker.test(currentCursor)) {
                 return;

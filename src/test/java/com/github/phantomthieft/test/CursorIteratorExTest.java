@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.github.phantomthieft.test;
 
 import static com.github.phantomthief.util.CursorIteratorEx.newBuilder;
@@ -9,7 +6,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import com.github.phantomthief.util.CursorIteratorEx;
@@ -18,12 +15,12 @@ import com.github.phantomthieft.test.UserDAO.ScanResult;
 /**
  * @author w.vela
  */
-public class CursorIteratorExTest {
+class CursorIteratorExTest {
 
     private final Logger logger = getLogger(getClass());
 
     @Test
-    public void test() {
+    void test() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;

@@ -1,17 +1,14 @@
-/**
- * 
- */
 package com.github.phantomthieft.test;
 
 import static com.github.phantomthief.util.CursorIterator.newBuilder;
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import com.github.phantomthief.util.CursorIterator;
@@ -19,12 +16,12 @@ import com.github.phantomthief.util.CursorIterator;
 /**
  * @author w.vela
  */
-public class CursorIteratorTest {
+class CursorIteratorTest {
 
     private final Logger logger = getLogger(getClass());
 
     @Test
-    public void test() {
+    void test() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
@@ -49,7 +46,7 @@ public class CursorIteratorTest {
     }
 
     @Test
-    public void testIterateTwice() {
+    void testIterateTwice() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
@@ -63,7 +60,7 @@ public class CursorIteratorTest {
     }
 
     @Test
-    public void testPageThreshold() {
+    void testPageThreshold() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
@@ -88,7 +85,7 @@ public class CursorIteratorTest {
     }
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
@@ -106,7 +103,7 @@ public class CursorIteratorTest {
     }
 
     @Test
-    public void testGenericBuilder() {
+    void testGenericBuilder() {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;

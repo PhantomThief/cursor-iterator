@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.AbstractIterator;
 
 /**
@@ -21,7 +23,7 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     private final Function<Entity, Id> entityIdFunction;
     private int maxNumberOfPages = Integer.MAX_VALUE;
 
-    public PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
+    PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
             Function<Entity, Id> entityIdFunction) {
         this.dao = dao;
         this.initCursor = initCursor;
@@ -42,6 +44,7 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         this.maxNumberOfPages = maxNumberOfPages;
     }
 
+    @Nonnull
     @Override
     public Iterator<List<Entity>> iterator() {
         return new AbstractIterator<List<Entity>>() {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.github.phantomthief.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -17,6 +14,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 import com.google.common.collect.AbstractIterator;
 
@@ -47,6 +45,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         return new Builder<>();
     }
 
+    @Nonnull
     @Override
     public Iterator<Entity> iterator() {
         return new AbstractIterator<Entity>() {
