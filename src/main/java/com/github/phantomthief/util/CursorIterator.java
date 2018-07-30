@@ -32,6 +32,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     }
 
     @CheckReturnValue
+    @Nonnull
     public static <I, E> GenericBuilder<I, E> newGenericBuilder() {
         return new GenericBuilder<>(newBuilder());
     }
@@ -41,6 +42,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
      */
     @Deprecated
     @CheckReturnValue
+    @Nonnull
     public static Builder<Object, Object> newBuilder() {
         return new Builder<>();
     }
@@ -80,11 +82,13 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             this.builder = builder;
         }
 
+        @Nonnull
         public CursorIterator<Id, Entity> build(GetByCursorDAO<? super Id, ? extends Entity> dao) {
             return builder.build(dao);
         }
 
         @CheckReturnValue
+        @Nonnull
         public GenericBuilder<Id, Entity>
                 cursorExtractor(Function<? super Entity, ? extends Id> function) {
             builder.cursorExtractor(function);
@@ -92,18 +96,21 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public GenericBuilder<Id, Entity> start(Id init) {
             builder.start(init);
             return this;
         }
 
         @CheckReturnValue
+        @Nonnull
         public GenericBuilder<Id, Entity> bufferSize(int bufferSize) {
             builder.bufferSize(bufferSize);
             return this;
         }
 
         @CheckReturnValue
+        @Nonnull
         public GenericBuilder<Id, Entity> maxNumberOfPages(int maxNumberOfPages) {
             builder.maxNumberOfPages(maxNumberOfPages);
             return this;
@@ -122,6 +129,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private Id init;
         private int maxNumberOfPages = 0;
 
+        @Nonnull
         public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.dao = (GetByCursorDAO<I, E>) dao;
@@ -129,6 +137,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public Builder<Id, Entity> bufferSize(int bufferSize) {
             checkArgument(bufferSize > 0);
             this.bufferSize = bufferSize;
@@ -136,6 +145,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <I, E> Builder<I, E> cursorExtractor(Function<? super E, ? extends I> function) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.function = (Function<E, I>) function;
@@ -143,6 +153,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <I, E> Builder<I, E> start(I init) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.init = init;
@@ -150,6 +161,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <I, E> Builder<I, E> maxNumberOfPages(int maxNumberOfPages) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.maxNumberOfPages = maxNumberOfPages;

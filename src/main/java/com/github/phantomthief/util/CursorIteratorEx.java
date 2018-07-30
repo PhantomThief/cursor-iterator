@@ -36,6 +36,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
     }
 
     @CheckReturnValue
+    @Nonnull
     public static Builder<Object, Object, Object> newBuilder() {
         return new Builder<>();
     }
@@ -62,6 +63,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         private Predicate<C> endChecker;
 
         @CheckReturnValue
+        @Nonnull
         public <C1> Builder<?, C1, ?> withInitCursor(C1 initCursor) {
             Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
             thisBuilder.initCursor = initCursor;
@@ -69,12 +71,14 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public Builder<T, C, R> firstCursorCheckEnd(boolean check) {
             this.checkFirstCursor = check;
             return this;
         }
 
         @CheckReturnValue
+        @Nonnull
         public <C1, R1> Builder<?, C1, R1> withDataRetriever(Function<C1, R1> dataRetriever) {
             Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
             thisBuilder.dataRetriever = dataRetriever;
@@ -82,6 +86,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <C1, R1> Builder<?, C1, R1> withCursorExtractor(Function<R1, C1> cursorExtractor) {
             Builder<?, C1, R1> thisBuilder = (Builder<?, C1, R1>) this;
             thisBuilder.cursorExtractor = cursorExtractor;
@@ -89,6 +94,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <T1, R1> Builder<T1, ?, R1>
                 withDataExtractor(Function<R1, Iterator<T1>> dataExtractor) {
             Builder<T1, ?, R1> thisBuilder = (Builder<T1, ?, R1>) this;
@@ -97,6 +103,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         }
 
         @CheckReturnValue
+        @Nonnull
         public <C1> Builder<?, C1, ?> withEndChecker(Predicate<C1> endChecker) {
             Builder<?, C1, ?> thisBuilder = (Builder<?, C1, ?>) this;
             thisBuilder.endChecker = endChecker;
@@ -104,6 +111,7 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
         }
 
         @SuppressWarnings("rawtypes")
+        @Nonnull
         public <T1, C1, R1> CursorIteratorEx<T1, C1, R1> build() {
             ensure();
             return new CursorIteratorEx(initCursor, checkFirstCursor, dataRetriever,
