@@ -18,4 +18,5 @@ hs_err_pid*
 .settings
 .classpath
 
-.README.md.html 
+.README.md.html
+.DS_Store 
