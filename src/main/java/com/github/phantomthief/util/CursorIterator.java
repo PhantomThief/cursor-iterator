@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.AbstractIterator;
 
 /**
+ * 注意：请尽量开启 {@link GenericBuilder#exclusiveEnd()}，这个选项保证在遍历中删除元素的安全性
+ * 默认行为是不安全的，会导致遍历数据错乱丢失，默认行为只是兼容旧的行为
  * 
  * @author w.vela
  */
