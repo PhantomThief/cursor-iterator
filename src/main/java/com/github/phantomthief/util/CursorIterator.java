@@ -1,5 +1,7 @@
 package com.github.phantomthief.util;
 
+import static com.github.phantomthief.util.PageScroller.MODE_END_EXCLUSIVE;
+import static com.github.phantomthief.util.PageScroller.MODE_START_EXCLUSIVE;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Spliterator.IMMUTABLE;
@@ -115,6 +117,16 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             builder.maxNumberOfPages(maxNumberOfPages);
             return this;
         }
+
+        /**
+         * 使用这个模式，每次遍历会从尾部去掉，而不是去掉头部，解决在遍历中删除遍历元素导致的不一致问题
+         */
+        @CheckReturnValue
+        @Nonnull
+        public GenericBuilder<Id, Entity> exclusiveEnd(){
+            builder.exclusiveEnd();
+            return this;
+        }
     }
 
     /**
@@ -128,6 +140,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private Function<Entity, Id> function;
         private Id init;
         private int maxNumberOfPages = 0;
+        private boolean mode = MODE_START_EXCLUSIVE;
 
         @Nonnull
         public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
@@ -168,9 +181,20 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             return thisBuilder;
         }
 
+        /**
+         * 使用这个模式，每次遍历会从尾部去掉，而不是去掉头部，解决在遍历中删除遍历元素导致的不一致问题
+         */
+        @CheckReturnValue
+        @Nonnull
+        public Builder<Id, Entity> exclusiveEnd() {
+            this.mode = MODE_END_EXCLUSIVE;
+            return this;
+        }
+
         private CursorIterator<Id, Entity> build() {
             ensure();
-            PageScroller<Id, Entity> scroller = new PageScroller<>(dao, init, bufferSize, function);
+            PageScroller<Id, Entity> scroller = new PageScroller<>(dao, init, bufferSize, function,
+                    mode);
             if (maxNumberOfPages > 0) {
                 scroller.setMaxNumberOfPages(maxNumberOfPages);
             }

@@ -15,20 +15,25 @@ import com.google.common.collect.AbstractIterator;
  *
  * @author lixian
  */
-public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
+class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
+
+    static final boolean MODE_START_EXCLUSIVE = true;
+    static final boolean MODE_END_EXCLUSIVE = false;
 
     private final GetByCursorDAO<Id, Entity> dao;
     private final Id initCursor;
     private final int bufferSize;
     private final Function<Entity, Id> entityIdFunction;
     private int maxNumberOfPages = Integer.MAX_VALUE;
+    private final boolean mode;
 
     PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
-            Function<Entity, Id> entityIdFunction) {
+            Function<Entity, Id> entityIdFunction, boolean mode) {
         this.dao = dao;
         this.initCursor = initCursor;
         this.bufferSize = bufferSize;
         this.entityIdFunction = entityIdFunction;
+        this.mode = mode;
     }
 
     /**
@@ -47,37 +52,68 @@ public class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     @Nonnull
     @Override
     public Iterator<List<Entity>> iterator() {
-        return new AbstractIterator<List<Entity>>() {
+        if (mode == MODE_START_EXCLUSIVE) {
+            return new AbstractIterator<List<Entity>>() {
 
-            private List<Entity> previousPage;
-            private boolean firstTime = true;
-            private int pageIndex = 0;
+                private List<Entity> previousPage;
+                private boolean firstTime = true;
+                private int pageIndex = 0;
 
-            @Override
-            protected List<Entity> computeNext() {
-                List<Entity> page;
-                if (firstTime) {
-                    firstTime = false;
-                    // 第一次, 正常取
-                    page = dao.getByCursor(initCursor, bufferSize);
-                } else {
-                    if (pageIndex >= maxNumberOfPages) {
-                        // 已经取到限制的页数了
-                        page = Collections.emptyList();
-                    } else if (previousPage.size() < bufferSize) {
-                        // 上页还不满, fail fast
-                        page = Collections.emptyList();
+                @Override
+                protected List<Entity> computeNext() {
+                    List<Entity> page;
+                    if (firstTime) {
+                        firstTime = false;
+                        // 第一次, 正常取
+                        page = dao.getByCursor(initCursor, bufferSize);
                     } else {
-                        Id start = entityIdFunction
-                                .apply(previousPage.get(previousPage.size() - 1));
-                        page = fetchOnePageExcludeStart(dao, start, bufferSize);
+                        if (pageIndex >= maxNumberOfPages) {
+                            // 已经取到限制的页数了
+                            page = Collections.emptyList();
+                        } else if (previousPage.size() < bufferSize) {
+                            // 上页还不满, fail fast
+                            page = Collections.emptyList();
+                        } else {
+                            Id start = entityIdFunction
+                                    .apply(previousPage.get(previousPage.size() - 1));
+                            page = fetchOnePageExcludeStart(dao, start, bufferSize);
+                        }
+                    }
+
+                    previousPage = page;
+                    pageIndex++;
+                    return page.isEmpty() ? endOfData() : page;
+                }
+            };
+        } else {
+            return new AbstractIterator<List<Entity>>() {
+                
+                private int pageIndex = 0;
+                private Id cursor = initCursor;
+                private boolean noNext = false;
+
+                @Override
+                protected List<Entity> computeNext() {
+                    if (noNext) {
+                        return endOfData();
+                    }
+                    pageIndex++;
+                    if (pageIndex > maxNumberOfPages) {
+                        return endOfData();
+                    }
+                    List<Entity> list = dao.getByCursor(cursor, bufferSize + 1);
+                    if (list.isEmpty()) {
+                        return endOfData();
+                    }
+                    if (list.size() >= bufferSize + 1) {
+                        cursor = entityIdFunction.apply(list.get(bufferSize));
+                        return list.subList(0, bufferSize);
+                    } else {
+                        noNext = true;
+                        return list;
                     }
                 }
-
-                previousPage = page;
-                pageIndex++;
-                return page.isEmpty() ? endOfData() : page;
-            }
-        };
+            };
+        }
     }
 }
