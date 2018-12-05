@@ -21,9 +21,6 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.AbstractIterator;
 
 /**
- * 注意：请尽量开启 {@link GenericBuilder#removeSafeMode()}，这个选项保证在遍历中删除元素的安全性
- * 默认行为是不安全的，会导致遍历数据错乱丢失，默认行为只是兼容旧的行为
- * 
  * @author w.vela
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
@@ -86,9 +83,18 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             this.builder = builder;
         }
 
+        /**
+         * 使用 {@link #buildEx} 代替，后者在迭代中删除是友好的
+         */
+        @Deprecated
         @Nonnull
         public CursorIterator<Id, Entity> build(GetByCursorDAO<? super Id, ? extends Entity> dao) {
             return builder.build(dao);
+        }
+
+        @Nonnull
+        public CursorIterator<Id, Entity> buildEx(GetByCursorDAO<? super Id, ? extends Entity> dao) {
+            return builder.buildEx(dao);
         }
 
         @CheckReturnValue
@@ -119,16 +125,6 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             builder.maxNumberOfPages(maxNumberOfPages);
             return this;
         }
-
-        /**
-         * 使用这个模式，每次遍历会从尾部去掉，而不是去掉头部，解决在遍历中删除遍历元素导致的不一致问题
-         */
-        @CheckReturnValue
-        @Nonnull
-        public GenericBuilder<Id, Entity> removeSafeMode(){
-            builder.removeSafeMode();
-            return this;
-        }
     }
 
     /**
@@ -144,11 +140,21 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private int maxNumberOfPages = 0;
         private boolean mode = MODE_START_EXCLUSIVE;
 
+        /**
+         * 使用 {@link #buildEx} 代替，后者在迭代中删除是友好的
+         */
+        @Deprecated
         @Nonnull
         public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.dao = (GetByCursorDAO<I, E>) dao;
             return thisBuilder.build();
+        }
+
+        @Nonnull
+        public <I, E> CursorIterator<I, E> buildEx(GetByCursorDAO<? super I, ? extends E> dao) {
+            this.mode = MODE_END_EXCLUSIVE;
+            return build(dao);
         }
 
         @CheckReturnValue
@@ -181,16 +187,6 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.maxNumberOfPages = maxNumberOfPages;
             return thisBuilder;
-        }
-
-        /**
-         * 使用这个模式，每次遍历会从尾部去掉，而不是去掉头部，解决在遍历中删除遍历元素导致的不一致问题
-         */
-        @CheckReturnValue
-        @Nonnull
-        public Builder<Id, Entity> removeSafeMode() {
-            this.mode = MODE_END_EXCLUSIVE;
-            return this;
         }
 
         private CursorIterator<Id, Entity> build() {

@@ -123,14 +123,19 @@ class CursorIteratorTest {
 
     @Test
     void testDeleteWhileIterator() {
-        int allSize = 1005;
+        testDeleting(1005);
+        testDeleting(1000);
+        testNoDeleting(1005);
+        testNoDeleting(1000);
+    }
+
+    private void testDeleting(int allSize) {
         MutableDAO dao = new MutableDAO(allSize);
         CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                                                                                                  .start(0) //
-                                                                                                  .cursorExtractor(User::getId) //
-                                                                                                  .bufferSize(10) //
-                                                                                                  .removeSafeMode() //
-                                                                                                  .build(dao::getByCursor);
+                .start(0) //
+                .cursorExtractor(User::getId) //
+                .bufferSize(10) //
+                .buildEx(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
             users.add(user);
@@ -143,6 +148,23 @@ class CursorIteratorTest {
         assertEquals(0, cursor.stream().count());
     }
 
+    private void testNoDeleting(int allSize) {
+        MutableDAO dao = new MutableDAO(allSize);
+        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
+                .start(0) //
+                .cursorExtractor(User::getId) //
+                .bufferSize(10) //
+                .buildEx(dao::getByCursor);
+        List<User> users = new ArrayList<>();
+        for (User user : cursor) {
+            users.add(user);
+        }
+        for (int i = 1; i <= allSize; i++) {
+            assertEquals(new User(i), users.get(i - 1));
+        }
+        assertEquals(allSize, users.size());
+    }
+
     @Test
     void testPageSize() {
         int allSize = 1005;
@@ -150,12 +172,11 @@ class CursorIteratorTest {
         int bufferSize = 10;
         int maxNumberOfPages = 3;
         CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                                                                                                  .start(0) //
-                                                                                                  .cursorExtractor(User::getId) //
-                                                                                                  .bufferSize(bufferSize) //
-                                                                                                  .removeSafeMode() //
-                                                                                                  .maxNumberOfPages(maxNumberOfPages) //
-                                                                                                  .build(dao::getByCursor);
+                .start(0) //
+                .cursorExtractor(User::getId) //
+                .bufferSize(bufferSize) //
+                .maxNumberOfPages(maxNumberOfPages) //
+                .buildEx(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
             users.add(user);
