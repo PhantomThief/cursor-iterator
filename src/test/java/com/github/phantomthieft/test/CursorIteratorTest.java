@@ -126,11 +126,11 @@ class CursorIteratorTest {
         int allSize = 1005;
         MutableDAO dao = new MutableDAO(allSize);
         CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(0) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(10) //
-                .exclusiveEnd() //
-                .build(dao::getByCursor);
+                                                                                                  .start(0) //
+                                                                                                  .cursorExtractor(User::getId) //
+                                                                                                  .bufferSize(10) //
+                                                                                                  .removeSafeMode() //
+                                                                                                  .build(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
             users.add(user);
@@ -150,12 +150,12 @@ class CursorIteratorTest {
         int bufferSize = 10;
         int maxNumberOfPages = 3;
         CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(0) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(bufferSize) //
-                .exclusiveEnd() //
-                .maxNumberOfPages(maxNumberOfPages) //
-                .build(dao::getByCursor);
+                                                                                                  .start(0) //
+                                                                                                  .cursorExtractor(User::getId) //
+                                                                                                  .bufferSize(bufferSize) //
+                                                                                                  .removeSafeMode() //
+                                                                                                  .maxNumberOfPages(maxNumberOfPages) //
+                                                                                                  .build(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
             users.add(user);

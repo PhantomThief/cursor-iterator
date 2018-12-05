@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.AbstractIterator;
 
 /**
- * 注意：请尽量开启 {@link GenericBuilder#exclusiveEnd()}，这个选项保证在遍历中删除元素的安全性
+ * 注意：请尽量开启 {@link GenericBuilder#removeSafeMode()}，这个选项保证在遍历中删除元素的安全性
  * 默认行为是不安全的，会导致遍历数据错乱丢失，默认行为只是兼容旧的行为
  * 
  * @author w.vela
@@ -125,8 +125,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
          */
         @CheckReturnValue
         @Nonnull
-        public GenericBuilder<Id, Entity> exclusiveEnd(){
-            builder.exclusiveEnd();
+        public GenericBuilder<Id, Entity> removeSafeMode(){
+            builder.removeSafeMode();
             return this;
         }
     }
@@ -188,7 +188,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
          */
         @CheckReturnValue
         @Nonnull
-        public Builder<Id, Entity> exclusiveEnd() {
+        public Builder<Id, Entity> removeSafeMode() {
             this.mode = MODE_END_EXCLUSIVE;
             return this;
         }
