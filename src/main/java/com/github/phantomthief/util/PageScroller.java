@@ -45,13 +45,13 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     @Override
     public Iterator<List<Entity>> iterator() {
         if (mode == MODE_START_EXCLUSIVE) {
-            return new ExclusiveStartIterator();
+            return new ExcludeStartIterator();
         } else {
-            return new ExclusiveEndIterator();
+            return new ExcludeEndIterator();
         }
     }
 
-    private class ExclusiveStartIterator extends AbstractIterator<List<Entity>> {
+    private class ExcludeStartIterator extends AbstractIterator<List<Entity>> {
 
         private List<Entity> previousPage;
         private boolean firstTime = true;
@@ -92,7 +92,7 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         }
     }
 
-    private class ExclusiveEndIterator extends AbstractIterator<List<Entity>> {
+    private class ExcludeEndIterator extends AbstractIterator<List<Entity>> {
 
         private int pageIndex = 0;
         private Id cursor = initCursor;
