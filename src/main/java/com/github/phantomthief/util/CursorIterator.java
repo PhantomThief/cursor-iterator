@@ -1,5 +1,7 @@
 package com.github.phantomthief.util;
 
+import static com.github.phantomthief.util.PageScroller.MODE_TRIM_LAST;
+import static com.github.phantomthief.util.PageScroller.MODE_TRIM_FIRST;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Spliterator.IMMUTABLE;
@@ -19,7 +21,6 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.AbstractIterator;
 
 /**
- * 
  * @author w.vela
  */
 public class CursorIterator<Id, Entity> implements Iterable<Entity> {
@@ -82,9 +83,18 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             this.builder = builder;
         }
 
+        /**
+         * 使用 {@link #buildEx} 代替，后者在迭代中删除是友好的
+         */
+        @Deprecated
         @Nonnull
         public CursorIterator<Id, Entity> build(GetByCursorDAO<? super Id, ? extends Entity> dao) {
             return builder.build(dao);
+        }
+
+        @Nonnull
+        public CursorIterator<Id, Entity> buildEx(GetByCursorDAO<? super Id, ? extends Entity> dao) {
+            return builder.buildEx(dao);
         }
 
         @CheckReturnValue
@@ -118,9 +128,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     }
 
     /**
-     *
+     * 使用 {@link #newGenericBuilder()} 代替
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
@@ -128,12 +139,23 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private Function<Entity, Id> function;
         private Id init;
         private int maxNumberOfPages = 0;
+        private boolean mode = MODE_TRIM_FIRST;
 
+        /**
+         * 使用 {@link #buildEx} 代替，后者在迭代中删除是友好的
+         */
+        @Deprecated
         @Nonnull
         public <I, E> CursorIterator<I, E> build(GetByCursorDAO<? super I, ? extends E> dao) {
             Builder<I, E> thisBuilder = (Builder<I, E>) this;
             thisBuilder.dao = (GetByCursorDAO<I, E>) dao;
             return thisBuilder.build();
+        }
+
+        @Nonnull
+        public <I, E> CursorIterator<I, E> buildEx(GetByCursorDAO<? super I, ? extends E> dao) {
+            this.mode = MODE_TRIM_LAST;
+            return build(dao);
         }
 
         @CheckReturnValue
@@ -170,7 +192,8 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
         private CursorIterator<Id, Entity> build() {
             ensure();
-            PageScroller<Id, Entity> scroller = new PageScroller<>(dao, init, bufferSize, function);
+            PageScroller<Id, Entity> scroller = new PageScroller<>(dao, init, bufferSize, function,
+                    mode);
             if (maxNumberOfPages > 0) {
                 scroller.setMaxNumberOfPages(maxNumberOfPages);
             }
