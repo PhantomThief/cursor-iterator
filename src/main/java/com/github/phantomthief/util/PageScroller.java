@@ -18,8 +18,8 @@ import com.google.common.collect.AbstractIterator;
  */
 class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
 
-    static final boolean MODE_START_EXCLUSIVE = true;
-    static final boolean MODE_END_EXCLUSIVE = false;
+    static final boolean MODE_TRIM_FIRST = true;
+    static final boolean MODE_TRIM_LAST = false;
 
     private final GetByCursorDAO<Id, Entity> dao;
     private final Id initCursor;
@@ -44,14 +44,14 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
     @Nonnull
     @Override
     public Iterator<List<Entity>> iterator() {
-        if (mode == MODE_START_EXCLUSIVE) {
-            return new ExcludeStartIterator();
+        if (mode == MODE_TRIM_FIRST) {
+            return new TrimFirstIterator();
         } else {
-            return new ExcludeEndIterator();
+            return new TrimLastIterator();
         }
     }
 
-    private class ExcludeStartIterator extends AbstractIterator<List<Entity>> {
+    private class TrimFirstIterator extends AbstractIterator<List<Entity>> {
 
         private List<Entity> previousPage;
         private boolean firstTime = true;
@@ -92,7 +92,7 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
         }
     }
 
-    private class ExcludeEndIterator extends AbstractIterator<List<Entity>> {
+    private class TrimLastIterator extends AbstractIterator<List<Entity>> {
 
         private int pageIndex = 0;
         private Id cursor = initCursor;

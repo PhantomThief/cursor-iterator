@@ -1,7 +1,7 @@
 package com.github.phantomthief.util;
 
-import static com.github.phantomthief.util.PageScroller.MODE_END_EXCLUSIVE;
-import static com.github.phantomthief.util.PageScroller.MODE_START_EXCLUSIVE;
+import static com.github.phantomthief.util.PageScroller.MODE_TRIM_LAST;
+import static com.github.phantomthief.util.PageScroller.MODE_TRIM_FIRST;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Spliterator.IMMUTABLE;
@@ -139,7 +139,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         private Function<Entity, Id> function;
         private Id init;
         private int maxNumberOfPages = 0;
-        private boolean mode = MODE_START_EXCLUSIVE;
+        private boolean mode = MODE_TRIM_FIRST;
 
         /**
          * 使用 {@link #buildEx} 代替，后者在迭代中删除是友好的
@@ -154,7 +154,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
         @Nonnull
         public <I, E> CursorIterator<I, E> buildEx(GetByCursorDAO<? super I, ? extends E> dao) {
-            this.mode = MODE_END_EXCLUSIVE;
+            this.mode = MODE_TRIM_LAST;
             return build(dao);
         }
 
