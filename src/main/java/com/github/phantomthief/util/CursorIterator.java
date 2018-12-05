@@ -128,9 +128,10 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     }
 
     /**
-     *
+     * 使用 {@link #newGenericBuilder()} 代替
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
