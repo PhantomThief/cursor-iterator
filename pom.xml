@@ -46,9 +46,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/PhantomThief/cursor-iterator.git</connection>
+        <connection>scm:git:git@github.com:PhantomThief/cursor-iterator.git</connection>
         <url>https://github.com/PhantomThief/cursor-iterator.git</url>
-        <developerConnection>scm:git:https://github.com/PhantomThief/cursor-iterator.git
+        <developerConnection>scm:git:git@github.com:PhantomThief/cursor-iterator.git
         </developerConnection>
     </scm>
 
