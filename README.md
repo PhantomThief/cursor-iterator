@@ -10,7 +10,7 @@
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11</version>
 </dependency>
 ```
 
@@ -19,7 +19,7 @@
 <dependency>
     <groupId>com.github.phantomthief</groupId>
 	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.11-SNAPSHOT</version>
+    <version>1.0.12-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -34,7 +34,8 @@ public class UserDAO {
             startId = 0;
         }
         List<User> result = IntStream.range(startId, Math.min(startId + limit, MAX_USER_ID))
-                .mapToObj(User::new).collect(Collectors.toList());
+                .mapToObj(User::new)
+                .collect(Collectors.toList());
         System.out.println("get users asc by id, startId:" + startId + ", limit:" + limit
                 + ", result:" + result);
         return result;
