@@ -21,9 +21,9 @@ class MutableDAO {
     }
 
     List<User> getByCursor(int startId, int limit) {
-        return userList.stream() //
-                .filter(user -> user.getId() >= startId) //
-                .limit(limit) //
+        return userList.stream()
+                .filter(user -> user.getId() >= startId)
+                .limit(limit)
                 .collect(toList());
     }
 

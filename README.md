@@ -43,16 +43,16 @@ public class UserDAO {
 }
 
 // 声明
-CursorIterator<Integer, User> users = CursorIterator.newBuilder() //
-        .start(startId) //
-        .cursorExtractor(User::getId) //
-        .bufferSize(countPerFetch) //
+CursorIterator<Integer, User> users = CursorIterator.newBuilder()
+        .start(startId)
+        .cursorExtractor(User::getId)
+        .bufferSize(countPerFetch)
         .build(UserDAO::getUsersAscById);
 
 // jdk1.8 Stream方式
-List<User> collect = users.stream() //
-		.filter(user -> user.getId() % 11 == 0) //
-		.limit(5) //
+List<User> collect = users.stream()
+		.filter(user -> user.getId() % 11 == 0)
+		.limit(5)
         .collect(Collectors.toList());
         
 // 传统迭代器模式

@@ -24,16 +24,16 @@ class CursorIteratorExTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIteratorEx<User, Integer, ScanResult> users = newBuilder() //
-                .withDataRetriever((Integer cursor) -> userDAO.scan(cursor, countPerFetch)) //
-                .withCursorExtractor(ScanResult::getNextCursor) //
-                .withDataExtractor((ScanResult s) -> s.getUsers().iterator()) //
-                .withInitCursor(startId) //
+        CursorIteratorEx<User, Integer, ScanResult> users = newBuilder()
+                .withDataRetriever((Integer cursor) -> userDAO.scan(cursor, countPerFetch))
+                .withCursorExtractor(ScanResult::getNextCursor)
+                .withDataExtractor((ScanResult s) -> s.getUsers().iterator())
+                .withInitCursor(startId)
                 .build();
 
-        List<User> collect = users.stream() //
-                .filter(user -> user.getId() % 11 == 0) //
-                .limit(5) //
+        List<User> collect = users.stream()
+                .filter(user -> user.getId() % 11 == 0)
+                .limit(5)
                 .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }

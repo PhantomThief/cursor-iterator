@@ -26,10 +26,10 @@ class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = newBuilder() //
-                .start(startId) //
-                .bufferSize(countPerFetch) //
-                .cursorExtractor(User::getId) //
+        CursorIterator<Integer, User> users = newBuilder()
+                .start(startId)
+                .bufferSize(countPerFetch)
+                .cursorExtractor(User::getId)
                 .build(userDAO::getUsersAscById);
 
         List<User> finalResult = new ArrayList<>();
@@ -51,10 +51,10 @@ class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = newBuilder() //
-                .start(startId) //
-                .bufferSize(countPerFetch) //
-                .cursorExtractor(User::getId) //
+        CursorIterator<Integer, User> users = newBuilder()
+                .start(startId)
+                .bufferSize(countPerFetch)
+                .cursorExtractor(User::getId)
                 .build(userDAO::getUsersAscById);
         iterateOnce(users);
         iterateOnce(users);
@@ -65,10 +65,10 @@ class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = newBuilder() //
-                .start(startId) //
-                .bufferSize(countPerFetch) //
-                .cursorExtractor(User::getId) //
+        CursorIterator<Integer, User> users = newBuilder()
+                .start(startId)
+                .bufferSize(countPerFetch)
+                .cursorExtractor(User::getId)
                 .maxNumberOfPages(3).build(userDAO::getUsersAscById);
         int i = 100;
         for (User user : users) {
@@ -90,15 +90,15 @@ class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = newBuilder() //
-                .start(startId) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(countPerFetch) //
+        CursorIterator<Integer, User> users = newBuilder()
+                .start(startId)
+                .cursorExtractor(User::getId)
+                .bufferSize(countPerFetch)
                 .build(userDAO::getUsersAscById);
 
-        List<User> collect = users.stream() //
-                .filter(user -> user.getId() % 11 == 0) //
-                .limit(5) //
+        List<User> collect = users.stream()
+                .filter(user -> user.getId() % 11 == 0)
+                .limit(5)
                 .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
@@ -108,15 +108,15 @@ class CursorIteratorTest {
         UserDAO userDAO = new UserDAO();
         Integer startId = 100;
         int countPerFetch = 10;
-        CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(startId) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(countPerFetch) //
+        CursorIterator<Integer, User> users = CursorIterator.<Integer, User> newGenericBuilder()
+                .start(startId)
+                .cursorExtractor(User::getId)
+                .bufferSize(countPerFetch)
                 .build(userDAO::getUsersAscById);
 
-        List<User> collect = users.stream() //
-                .filter(user -> user.getId() % 11 == 0) //
-                .limit(5) //
+        List<User> collect = users.stream()
+                .filter(user -> user.getId() % 11 == 0)
+                .limit(5)
                 .collect(toList());
         collect.forEach(u -> logger.info("user:{}", u));
     }
@@ -131,10 +131,10 @@ class CursorIteratorTest {
 
     private void testDeleting(int allSize) {
         MutableDAO dao = new MutableDAO(allSize);
-        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(0) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(10) //
+        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder()
+                .start(0)
+                .cursorExtractor(User::getId)
+                .bufferSize(10)
                 .buildEx(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
@@ -150,10 +150,10 @@ class CursorIteratorTest {
 
     private void testNoDeleting(int allSize) {
         MutableDAO dao = new MutableDAO(allSize);
-        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(0) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(10) //
+        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder()
+                .start(0)
+                .cursorExtractor(User::getId)
+                .bufferSize(10)
                 .buildEx(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
@@ -171,11 +171,11 @@ class CursorIteratorTest {
         MutableDAO dao = new MutableDAO(allSize);
         int bufferSize = 10;
         int maxNumberOfPages = 3;
-        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder() //
-                .start(0) //
-                .cursorExtractor(User::getId) //
-                .bufferSize(bufferSize) //
-                .maxNumberOfPages(maxNumberOfPages) //
+        CursorIterator<Integer, User> cursor = CursorIterator.<Integer, User> newGenericBuilder()
+                .start(0)
+                .cursorExtractor(User::getId)
+                .bufferSize(bufferSize)
+                .maxNumberOfPages(maxNumberOfPages)
                 .buildEx(dao::getByCursor);
         List<User> users = new ArrayList<>();
         for (User user : cursor) {
