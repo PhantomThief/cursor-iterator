@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 
 import javax.annotation.Nonnull;
 
@@ -23,12 +24,12 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
 
     private final GetByCursorDAO<Id, Entity> dao;
     private final Id initCursor;
-    private final int bufferSize;
+    private final IntSupplier bufferSize;
     private final Function<Entity, Id> entityIdFunction;
     private int maxNumberOfPages = Integer.MAX_VALUE;
     private final boolean mode;
 
-    PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, int bufferSize,
+    PageScroller(GetByCursorDAO<Id, Entity> dao, Id initCursor, IntSupplier bufferSize,
             Function<Entity, Id> entityIdFunction, boolean mode) {
         this.dao = dao;
         this.initCursor = initCursor;
@@ -59,21 +60,22 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
 
         @Override
         protected List<Entity> computeNext() {
+            int thisBufferSize = bufferSize.getAsInt();
             List<Entity> page;
             if (firstTime) {
                 firstTime = false;
                 // 第一次, 正常取
-                page = dao.getByCursor(initCursor, bufferSize);
+                page = dao.getByCursor(initCursor, thisBufferSize);
             } else {
                 if (pageIndex >= maxNumberOfPages) {
                     // 已经取到限制的页数了
                     page = emptyList();
-                } else if (previousPage.size() < bufferSize) {
+                } else if (previousPage.size() < thisBufferSize) {
                     // 上页还不满, fail fast
                     page = emptyList();
                 } else {
                     Id start = entityIdFunction.apply(previousPage.get(previousPage.size() - 1));
-                    page = fetchOnePageExcludeStart(dao, start, bufferSize);
+                    page = fetchOnePageExcludeStart(dao, start, thisBufferSize);
                 }
             }
 
@@ -107,13 +109,14 @@ class PageScroller<Id, Entity> implements Iterable<List<Entity>> {
             if (pageIndex > maxNumberOfPages) {
                 return endOfData();
             }
-            List<Entity> list = dao.getByCursor(cursor, bufferSize + 1);
+            int thisBufferSize = bufferSize.getAsInt();
+            List<Entity> list = dao.getByCursor(cursor, thisBufferSize + 1);
             if (list.isEmpty()) {
                 return endOfData();
             }
-            if (list.size() >= bufferSize + 1) {
-                cursor = entityIdFunction.apply(list.get(bufferSize));
-                return list.subList(0, bufferSize);
+            if (list.size() >= thisBufferSize + 1) {
+                cursor = entityIdFunction.apply(list.get(thisBufferSize));
+                return list.subList(0, thisBufferSize);
             } else {
                 noNext = true;
                 return list;

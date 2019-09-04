@@ -1,7 +1,7 @@
 package com.github.phantomthief.util;
 
-import static com.github.phantomthief.util.PageScroller.MODE_TRIM_LAST;
 import static com.github.phantomthief.util.PageScroller.MODE_TRIM_FIRST;
+import static com.github.phantomthief.util.PageScroller.MODE_TRIM_LAST;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Spliterator.IMMUTABLE;
@@ -12,6 +12,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -121,6 +122,13 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
 
         @CheckReturnValue
         @Nonnull
+        public GenericBuilder<Id, Entity> bufferSize(IntSupplier bufferSize) {
+            builder.bufferSize(bufferSize);
+            return this;
+        }
+
+        @CheckReturnValue
+        @Nonnull
         public GenericBuilder<Id, Entity> maxNumberOfPages(int maxNumberOfPages) {
             builder.maxNumberOfPages(maxNumberOfPages);
             return this;
@@ -135,7 +143,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
     public static class Builder<Id, Entity> {
 
         private GetByCursorDAO<Id, Entity> dao;
-        private Integer bufferSize;
+        private IntSupplier bufferSize;
         private Function<Entity, Id> function;
         private Id init;
         private int maxNumberOfPages = 0;
@@ -162,7 +170,13 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
         @Nonnull
         public Builder<Id, Entity> bufferSize(int bufferSize) {
             checkArgument(bufferSize > 0);
-            this.bufferSize = bufferSize;
+            return bufferSize(() -> bufferSize);
+        }
+
+        @CheckReturnValue
+        @Nonnull
+        public Builder<Id, Entity> bufferSize(@Nonnull IntSupplier bufferSize) {
+            this.bufferSize = checkNotNull(bufferSize);
             return this;
         }
 
@@ -205,7 +219,7 @@ public class CursorIterator<Id, Entity> implements Iterable<Entity> {
             checkNotNull(function);
 
             if (bufferSize == null) {
-                bufferSize = DEFAULT_BUFFER_SIZE;
+                bufferSize = () -> DEFAULT_BUFFER_SIZE;
             }
         }
     }

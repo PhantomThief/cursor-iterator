@@ -8,6 +8,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -127,6 +128,28 @@ class CursorIteratorTest {
         testDeleting(1000);
         testNoDeleting(1005);
         testNoDeleting(1000);
+    }
+
+    @Test
+    void testDynamicBufferSize() {
+        UserDAO userDAO = new UserDAO();
+        int[] daoCount = {0};
+        CursorIterator<Integer, User> users = newBuilder()
+                .start(null)
+                .cursorExtractor(User::getId)
+                .bufferSize(() -> ThreadLocalRandom.current().nextInt(1, 10))
+                .buildEx((startId, limit) -> {
+                    daoCount[0]++;
+                    return userDAO.getUsersAscById(startId, limit);
+                });
+        List<User> result = users.stream()
+                .limit(200)
+                .collect(toList());
+        assertEquals(200, result.size());
+        for (int i = 0; i < 200; i++) {
+            assertEquals(i, result.get(i).getId());
+        }
+        assertTrue(daoCount[0] > 20);
     }
 
     private void testDeleting(int allSize) {
