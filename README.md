@@ -1,27 +1,9 @@
-# Cursor Iterator [![Build Status](https://travis-ci.org/PhantomThief/cursor-iterator.svg)](https://travis-ci.org/PhantomThief/cursor-iterator) [![Coverage Status](https://coveralls.io/repos/PhantomThief/cursor-iterator/badge.svg?branch=master)](https://coveralls.io/r/PhantomThief/cursor-iterator?branch=master)
+# Cursor Iterator [![Build Status](https://travis-ci.org/PhantomThief/cursor-iterator.svg)](https://travis-ci.org/PhantomThief/cursor-iterator) [![Coverage Status](https://coveralls.io/repos/PhantomThief/cursor-iterator/badge.svg?branch=master)](https://coveralls.io/r/PhantomThief/cursor-iterator?branch=master) [![Total alerts](https://img.shields.io/lgtm/alerts/g/PhantomThief/cursor-iterator.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/PhantomThief/cursor-iterator/alerts/) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/PhantomThief/cursor-iterator.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/PhantomThief/cursor-iterator/context:java) [![Maven Central](https://img.shields.io/maven-central/v/com.github.phantomthief/cursor-iterator)](https://search.maven.org/artifact/com.github.phantomthief/cursor-iterator/)
 =======================
 
 一个简单的适合移动端无限下拉构建数据的后端支持组件 
 
 ## 使用方法
-
-* Stable版本
-```xml
-<dependency>
-    <groupId>com.github.phantomthief</groupId>
-	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.11</version>
-</dependency>
-```
-
-* Development版本
-```xml
-<dependency>
-    <groupId>com.github.phantomthief</groupId>
-	<artifactId>cursor-iterator</artifactId>
-    <version>1.0.12-SNAPSHOT</version>
-</dependency>
-```
 
 ```Java
 public class UserDAO {
