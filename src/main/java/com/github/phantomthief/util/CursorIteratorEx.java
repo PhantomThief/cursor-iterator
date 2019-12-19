@@ -123,10 +123,10 @@ public class CursorIteratorEx<T, C, R> implements Iterable<T> {
                 throw new NullPointerException("data extractor is null.");
             }
             if (dataRetriever == null) {
-                throw new NullPointerException("data retriver is null.");
+                throw new NullPointerException("data retriever is null.");
             }
             if (cursorExtractor == null) {
-                throw new NullPointerException("data retriver is null.");
+                throw new NullPointerException("data retriever is null.");
             }
             if (endChecker == null) {
                 endChecker = Objects::isNull;
