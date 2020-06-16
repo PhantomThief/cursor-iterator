@@ -1,4 +1,4 @@
-# Cursor Iterator
+Cursor Iterator
 =======================
 [![Build Status](https://travis-ci.org/PhantomThief/cursor-iterator.svg)](https://travis-ci.org/PhantomThief/cursor-iterator)
 [![Coverage Status](https://coveralls.io/repos/PhantomThief/cursor-iterator/badge.svg?branch=master)](https://coveralls.io/r/PhantomThief/cursor-iterator?branch=master)
