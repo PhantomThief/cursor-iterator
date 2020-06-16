@@ -8,7 +8,7 @@
         <jsr305.version>1.3.9</jsr305.version>
         <guava.version>28.1-jre</guava.version>
 
-        <junit.version>5.6.1</junit.version>
+        <junit.version>5.6.2</junit.version>
         <logback-classic.version>1.1.8</logback-classic.version>
 
         <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
