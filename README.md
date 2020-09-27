@@ -30,11 +30,11 @@ public class UserDAO {
 }
 
 // 声明
-CursorIterator<Integer, User> users = CursorIterator.newBuilder()
+CursorIterator<Integer, User> users = CursorIterator.newGenericBuilder()
         .start(startId)
         .cursorExtractor(User::getId)
         .bufferSize(countPerFetch)
-        .build(UserDAO::getUsersAscById);
+        .buildEx(UserDAO::getUsersAscById);
 
 // jdk1.8 Stream方式
 List<User> collect = users.stream()

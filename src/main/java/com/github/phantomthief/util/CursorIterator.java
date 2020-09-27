@@ -54,7 +54,7 @@ import com.google.common.collect.AbstractIterator;
  *         .start(1)
  *         .bufferSize(100)
  *         .cursorExtractor(User::getId)
- *         .build(UserRepository::findAllUsers);
+ *         .buildEx(UserRepository::findAllUsers);
  * // 直接作为Stream访问
  * users.stream().forEach(user -> {
  *     // 访问单个用户
